@@ -1,0 +1,6 @@
+{
+  "name": "USA Review Store",
+  "description": "Professional reputation management, customer feedback, review-request, and digital reputation services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

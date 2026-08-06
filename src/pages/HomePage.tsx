@@ -1,0 +1,375 @@
+import React, { useState } from 'react';
+import { SERVICES, SERVICE_CATEGORIES, searchServices } from '../data/services';
+import { ServiceCard } from '../components/ServiceCard';
+import { CONTACT_INFO } from '../data/contactInfo';
+import { BrandLogo } from '../components/BrandLogo';
+import {
+  Search,
+  ShieldCheck,
+  CheckCircle2,
+  ArrowRight,
+  Sparkles,
+  MessageSquare,
+  PhoneCall,
+  Lock,
+  Clock,
+  DollarSign,
+  Award,
+  Users,
+  ChevronRight,
+} from 'lucide-react';
+
+interface HomePageProps {
+  onNavigate: (path: string) => void;
+}
+
+export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  const filteredServices = searchServices(searchQuery, selectedCategory);
+  const featuredServices = SERVICES.filter((s) => s.featured).slice(0, 6);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      onNavigate(`/services?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      onNavigate('/services');
+    }
+  };
+
+  return (
+    <div className="space-y-16 pb-16">
+      {/* HERO SECTION */}
+      <section className="relative overflow-hidden bg-slate-900 text-white pt-16 pb-20 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">
+          {/* Top Pill */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-slate-200 text-xs font-bold shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Trusted Digital Reputation & Customer Feedback Agency</span>
+          </div>
+
+          {/* Headline */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight text-white max-w-4xl mx-auto">
+            Build & Protect Your <span className="text-blue-400">Online Reputation</span>
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed font-normal">
+            Enterprise-grade customer feedback collection, review management, and profile optimization for growing businesses.
+          </p>
+
+          {/* Hero Search Box */}
+          <form onSubmit={handleSearchSubmit} className="max-w-2xl mx-auto">
+            <div className="relative flex items-center bg-white rounded-2xl p-2 shadow-xl border border-slate-200 text-slate-900">
+              <Search className="w-5 h-5 text-slate-400 ml-3 shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search platforms (e.g. Google, Trustpilot, Facebook)..."
+                className="w-full px-3 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition-all shadow-sm shrink-0 flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Search</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2 mt-3 text-xs text-slate-400">
+              <span className="font-semibold text-slate-300">Popular:</span>
+              {['Google', 'Trustpilot', 'Facebook', 'Glassdoor', 'Monitoring'].map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => onNavigate(`/services?q=${term}`)}
+                  className="hover:text-white transition-colors cursor-pointer"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
+          </form>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => onNavigate('/services')}
+              className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-blue-900/30 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Explore 27+ Services</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onNavigate('/contact')}
+              className="w-full sm:w-auto px-8 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-sm rounded-xl border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Talk to Support</span>
+            </button>
+          </div>
+
+          {/* Trust Badges Bar */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-8 border-t border-slate-800 text-slate-300 text-xs font-semibold">
+            <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+              <Lock className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>100% Confidential</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+              <Clock className="w-4 h-4 text-sky-400 shrink-0" />
+              <span>24/7 Live Support</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+              <DollarSign className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Transparent Rates</span>
+            </div>
+            <div className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/50">
+              <Award className="w-4 h-4 text-blue-400 shrink-0" />
+              <span>Non-Drop Guarantee</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SUPPORTED PLATFORMS BRAND LOGOS BAR */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xs space-y-4">
+          <div className="text-center space-y-1">
+            <span className="text-[11px] font-extrabold uppercase tracking-widest text-indigo-600 block">
+              Official Platform Support
+            </span>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              Supported Platforms & Reputation Catalogs
+            </h2>
+            <p className="text-xs text-slate-500">
+              Click any official logo to filter our specialized service packages.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 pt-2">
+            {[
+              { name: 'Google', query: 'Google' },
+              { name: 'Trustpilot', query: 'Trustpilot' },
+              { name: 'Facebook', query: 'Facebook' },
+              { name: 'Glassdoor', query: 'Glassdoor' },
+              { name: 'Thumbtack', query: 'Thumbtack' },
+              { name: 'Zillow', query: 'Zillow' },
+              { name: 'Houzz', query: 'Houzz' },
+              { name: 'HomeAdvisor', query: 'HomeAdvisor' },
+              { name: 'BBB', query: 'BBB' },
+              { name: 'Indeed', query: 'Indeed' },
+              { name: 'Booking.com', query: 'Booking' },
+              { name: 'WeddingWire', query: 'WeddingWire' },
+              { name: 'Avvo', query: 'Avvo' },
+              { name: 'RateMDs', query: 'RateMDs' },
+              { name: 'Bark', query: 'Bark' },
+              { name: 'Chrome', query: 'Chrome' },
+            ].map((p) => (
+              <button
+                key={p.name}
+                onClick={() => onNavigate(`/services?q=${p.query}`)}
+                className="p-3 bg-slate-50/80 hover:bg-indigo-50/80 rounded-2xl border border-slate-200/70 hover:border-indigo-300 transition-all flex flex-col items-center justify-center gap-2 group cursor-pointer"
+              >
+                <div className="w-9 h-9 rounded-xl bg-white border border-slate-100 p-1.5 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
+                  <BrandLogo platform={p.name} className="w-6 h-6" />
+                </div>
+                <span className="text-[11px] font-bold text-slate-800 group-hover:text-indigo-600 truncate max-w-full">
+                  {p.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED SERVICES SECTION */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-widest text-indigo-600 block mb-1">
+              Top Digital Reputation Solutions
+            </span>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+              Featured Service Catalog
+            </h2>
+          </div>
+          <button
+            onClick={() => onNavigate('/services')}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-800 transition-colors"
+          >
+            <span>View All Services ({SERVICES.length})</span>
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Category Pills Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-6 scrollbar-none">
+          <button
+            onClick={() => setSelectedCategory('All')}
+            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+              selectedCategory === 'All'
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            All Categories
+          </button>
+          {SERVICE_CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
+                selectedCategory === cat
+                  ? 'bg-indigo-600 text-white shadow-sm'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Services Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {(selectedCategory === 'All' ? featuredServices : filteredServices.slice(0, 6)).map((service) => (
+            <ServiceCard key={service.id} service={service} onNavigate={onNavigate} />
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS SECTION */}
+      <section className="bg-slate-50 py-16 border-y border-slate-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-indigo-600 block mb-2">
+              Simple 4-Step Process
+            </span>
+            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+              How USA Review Store Works
+            </h2>
+            <p className="text-slate-600 text-sm mt-2">
+              Our guest checkout model means no accounts, logins, or tedious password setups.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Step 1 */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative flex flex-col items-start space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold text-lg flex items-center justify-center">
+                1
+              </div>
+              <h3 className="font-bold text-slate-900 text-lg">Choose a Service</h3>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                Browse our comprehensive catalog of review-request, monitoring, and reputation management services.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative flex flex-col items-start space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold text-lg flex items-center justify-center">
+                2
+              </div>
+              <h3 className="font-bold text-slate-900 text-lg">Submit Details</h3>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                Provide your business name, website, platform URL, and any specific instructions on our guest checkout page.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative flex flex-col items-start space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold text-lg flex items-center justify-center">
+                3
+              </div>
+              <h3 className="font-bold text-slate-900 text-lg">Complete Payment</h3>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                Select your preferred cryptocurrency, transfer the order amount, and submit your Transaction Hash (TXID).
+              </p>
+            </div>
+
+            {/* Step 4 */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs relative flex flex-col items-start space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-extrabold text-lg flex items-center justify-center">
+                4
+              </div>
+              <h3 className="font-bold text-slate-900 text-lg">Receive Updates</h3>
+              <p className="text-slate-600 text-xs leading-relaxed">
+                Track your order status live with your reference number (URS-2026-XXXXX) while our team sets up your campaign.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST & ETHICS COMMITMENT */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-3xl p-8 lg:p-12 text-white shadow-xl relative overflow-hidden">
+          <div className="max-w-3xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
+              <ShieldCheck className="w-4 h-4" />
+              <span>Ethical Feedback Commitment</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+              Built on Genuine Customer Relationships
+            </h2>
+
+            <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+              USA Review Store strictly adheres to platform policies. We develop structured review invitation campaigns, negative feedback resolution gateways, and brand monitoring workflows that empower authentic customers to share their legitimate experiences.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-medium text-slate-200 pt-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Zero fake customer accounts or identities</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Full compliance with platform guidelines</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Transparent order tracking & 24/7 support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Dedicated account managers for campaigns</span>
+              </div>
+            </div>
+
+            <div className="pt-4 flex flex-wrap items-center gap-4">
+              <button
+                onClick={() => onNavigate('/about')}
+                className="px-6 py-3 bg-white text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                Read Our Mission & Policy
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA BANNER */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <div className="bg-indigo-50 border border-indigo-200/80 rounded-3xl p-8 sm:p-12 space-y-4">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+            Ready to Elevate Your Brand’s Online Reputation?
+          </h2>
+          <p className="text-slate-600 text-sm max-w-xl mx-auto">
+            Get started today in less than 2 minutes. Choose your service, submit your business URL, and let our team handle the rest.
+          </p>
+          <div className="pt-2">
+            <button
+              onClick={() => onNavigate('/services')}
+              className="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-all shadow-md inline-flex items-center gap-2"
+            >
+              <span>Explore All Services Now</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
