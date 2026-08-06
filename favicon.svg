@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+
+  <!-- Subtle inner border -->
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#334155" stroke-width="6" opacity="0.6"/>
+
+  <!-- Shield Base -->
+  <path d="M256 72 C320 72 380 90 400 110 C400 240 370 360 256 440 C142 360 112 240 112 110 C132 90 192 72 256 72 Z" 
+        fill="url(#primaryGrad)" 
+        filter="url(#glow)" />
+
+  <!-- Shield Inner Dark Layer -->
+  <path d="M256 94 C310 94 360 110 378 126 C378 234 352 336 256 406 C160 336 134 234 134 126 C152 110 202 94 256 94 Z" 
+        fill="#0f172a" 
+        opacity="0.85" />
+
+  <!-- Big 5-Star in Center -->
+  <polygon points="256,150 285,210 350,218 302,262 316,326 256,292 196,326 210,262 162,218 227,210" 
+           fill="url(#starGrad)" />
+
+  <!-- Checkmark Overlay on Star -->
+  <path d="M225 250 L248 275 L292 225" 
+        fill="none" 
+        stroke="#ffffff" 
+        stroke-width="18" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>
