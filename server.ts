@@ -317,10 +317,13 @@ async function start() {
     });
     app.use(vite.middlewares);
     app.use('*', async (req, res, next) => {
-      const url = req.originalUrl;
+      // Pass API requests and static assets through
+      if (req.originalUrl.startsWith('/api') || req.originalUrl.includes('.')) {
+        return next();
+      }
       try {
         let template = fs.readFileSync(path.resolve(process.cwd(), 'index.html'), 'utf-8');
-        template = await vite.transformIndexHtml(url, template);
+        template = await vite.transformIndexHtml(req.originalUrl, template);
         res.status(200).set({ 'Content-Type': 'text/html' }).end(template);
       } catch (e) {
         vite.ssrFixStacktrace(e as Error);
@@ -330,7 +333,7 @@ async function start() {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
-    app.get('*all', (req, res) => {
+    app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

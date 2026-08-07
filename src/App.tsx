@@ -14,18 +14,41 @@ function safeLazy<T extends React.ComponentType<any>>(
   return lazy(async () => {
     try {
       const m = await factory();
-      return { default: m[exportName] };
+      const Component = m[exportName] || m.default;
+      if (Component) return { default: Component };
+      throw new Error(`Export ${exportName} not found`);
     } catch (err) {
       console.warn(`Dynamic import for ${exportName} failed, retrying...`, err);
-      await new Promise(res => setTimeout(res, 500));
       try {
+        await new Promise(res => setTimeout(res, 300));
         const m = await factory();
-        return { default: m[exportName] };
+        const Component = m[exportName] || m.default;
+        if (Component) return { default: Component };
       } catch (retryErr) {
-        // Force page reload if module chunk is stale/missing
-        window.location.reload();
-        return new Promise(() => {}) as any;
+        console.error(`Dynamic import retry failed for ${exportName}:`, retryErr);
       }
+      // Fallback component if module chunk fails to load
+      const FallbackComponent: React.FC<any> = (props) => (
+        <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
+          <h2 className="text-2xl font-black text-slate-900">Unable to Load Section</h2>
+          <p className="text-xs text-slate-600">Please refresh the page or return to our homepage.</p>
+          <div className="flex justify-center gap-3 pt-2">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-5 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl cursor-pointer"
+            >
+              Refresh
+            </button>
+            <button
+              onClick={() => props.onNavigate ? props.onNavigate('/') : (window.location.href = '/')}
+              className="px-5 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl cursor-pointer"
+            >
+              Home
+            </button>
+          </div>
+        </div>
+      );
+      return { default: FallbackComponent };
     }
   });
 }
@@ -78,7 +101,13 @@ const getRepoBase = () => {
   return '';
 };
 
-const getNormalizedPath = (rawPath: string) => {
+const getNormalizedPath = (rawPath: string, search = '') => {
+  // Support GitHub Pages 404 redirect parameter ?/services/buy-google-reviews
+  if (search && search.startsWith('?/')) {
+    const redirectPath = search.slice(2).split('&')[0].replace(/~and~/g, '&');
+    return getNormalizedPath(redirectPath.startsWith('/') ? redirectPath : `/${redirectPath}`);
+  }
+
   let path = rawPath.split('?')[0];
   const repoBase = getRepoBase();
   if (repoBase && path.startsWith(repoBase)) {
@@ -88,15 +117,17 @@ const getNormalizedPath = (rawPath: string) => {
   if (path.length > 1 && path.endsWith('/')) {
     path = path.slice(0, -1);
   }
-  return path;
+  return path.toLowerCase();
 };
 
 export default function App() {
-  const [currentPath, setCurrentPath] = useState(() => getNormalizedPath(window.location.pathname));
+  const [currentPath, setCurrentPath] = useState(() => 
+    getNormalizedPath(window.location.pathname, window.location.search)
+  );
 
   useEffect(() => {
     const handlePopState = () => {
-      setCurrentPath(getNormalizedPath(window.location.pathname));
+      setCurrentPath(getNormalizedPath(window.location.pathname, window.location.search));
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -118,12 +149,12 @@ export default function App() {
       return <HomePage onNavigate={navigate} />;
     }
 
-    if (path === '/services') {
+    if (path === '/services' || path === '/service') {
       return <ServicesPage onNavigate={navigate} />;
     }
 
-    if (path.startsWith('/services/')) {
-      const slug = path.replace('/services/', '');
+    if (path.startsWith('/services/') || path.startsWith('/service/')) {
+      const slug = path.startsWith('/services/') ? path.replace('/services/', '') : path.replace('/service/', '');
       return <ServiceDetailPage slug={slug} onNavigate={navigate} />;
     }
 
