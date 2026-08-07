@@ -1,0 +1,17 @@
+{
+  "name": "USA Review Store",
+  "short_name": "USA Review Store",
+  "description": "#1 Organic Reputation & Verified Reviews Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
