@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BLOG_POSTS, BlogPost } from '../data/blogPosts';
 import { Search, Calendar, Clock, User, ArrowRight, Tag, ShieldCheck, Sparkles } from 'lucide-react';
+import { SEOHead } from '../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../lib/seoData';
 
 interface BlogListPageProps {
   onNavigate?: (path: string) => void;
@@ -9,6 +11,7 @@ interface BlogListPageProps {
 export const BlogListPage: React.FC<BlogListPageProps> = ({ onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const seo = MAIN_ROUTES_SEO['/blog'];
 
   const categories = ['All', ...Array.from(new Set(BLOG_POSTS.map((p) => p.category)))];
 
@@ -32,6 +35,13 @@ export const BlogListPage: React.FC<BlogListPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-20">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+      />
       {/* SEO Header Banner */}
       <section className="bg-gradient-to-b from-slate-900 via-slate-800 to-indigo-950 text-white py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
         <div className="max-w-7xl mx-auto text-center space-y-4">

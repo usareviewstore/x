@@ -2,6 +2,7 @@ import React from 'react';
 import { BLOG_POSTS, BlogPost } from '../data/blogPosts';
 import { ArrowLeft, Calendar, Clock, User, Tag, Share2, ShieldCheck, Sparkles, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { SERVICES } from '../data/services';
+import { SEOHead } from '../components/SEOHead';
 
 interface BlogPostPageProps {
   slug: string;
@@ -44,6 +45,26 @@ export const BlogPostPage: React.FC<BlogPostPageProps> = ({ slug, onNavigate }) 
 
   return (
     <article className="min-h-screen bg-slate-50/60 pb-20">
+      <SEOHead
+        title={post.metaTitle || `${post.title} | USA Review Store`}
+        description={post.metaDescription || post.excerpt}
+        keywords={post.tags.join(', ')}
+        canonicalUrl={`https://usareviewstore.com/blog/${post.slug}`}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Blog', url: '/blog' },
+          { name: post.title, url: `/blog/${post.slug}` }
+        ]}
+        articleMeta={{
+          title: post.title,
+          description: post.excerpt,
+          image: post.featuredImage,
+          publishedTime: post.publishedAt,
+          authorName: post.author.name,
+          category: post.category,
+          tags: post.tags
+        }}
+      />
       {/* Top Breadcrumb & Article Header */}
       <div className="bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
         <div className="max-w-4xl mx-auto space-y-6">

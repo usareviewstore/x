@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { FAQS } from '../data/faqs';
 import { HelpCircle, ChevronDown, ChevronUp, MessageSquare, ArrowRight } from 'lucide-react';
 import { CONTACT_INFO } from '../data/contactInfo';
+import { SEOHead } from '../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../lib/seoData';
 
 interface FAQPageProps {
   onNavigate: (path: string) => void;
@@ -9,6 +11,7 @@ interface FAQPageProps {
 
 export const FAQPage: React.FC<FAQPageProps> = ({ onNavigate }) => {
   const [openId, setOpenId] = useState<string>('fake-reviews-policy');
+  const seo = MAIN_ROUTES_SEO['/faq'];
 
   const toggleAccordion = (id: string) => {
     setOpenId(openId === id ? '' : id);
@@ -16,6 +19,14 @@ export const FAQPage: React.FC<FAQPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+        faqs={FAQS.map(f => ({ question: f.question, answer: f.answer }))}
+      />
       {/* Header */}
       <div className="text-center space-y-3">
         <span className="text-xs font-bold uppercase tracking-widest text-indigo-600">

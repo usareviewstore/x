@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TOOLS_LIST } from '../../data/toolsData';
 import { SERVICES } from '../../data/services';
 import { BrandLogo } from '../../components/BrandLogo';
+import { SEOHead } from '../../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../../lib/seoData';
 import {
   Sparkles,
   Zap,
@@ -19,21 +21,18 @@ interface ToolsLandingPageProps {
 }
 
 export const ToolsLandingPage: React.FC<ToolsLandingPageProps> = ({ onNavigate }) => {
-  useEffect(() => {
-    document.title = 'Free Online Reputation & Review Tools | USA Review Store';
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute(
-        'content',
-        'Explore free business utilities including Review Calculator, AI Review Generator, AI Response Generator, Review Link Generator, Badge Generator, and QR Code Generator.'
-      );
-    }
-  }, []);
-
+  const seo = MAIN_ROUTES_SEO['/tools'];
   const featuredServices = SERVICES.filter((s) => s.featured).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-slate-50/70 pb-20">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+      />
       {/* BREADCRUMB */}
       <div className="bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">

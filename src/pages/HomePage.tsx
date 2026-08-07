@@ -3,6 +3,8 @@ import { SERVICES, SERVICE_CATEGORIES, searchServices } from '../data/services';
 import { ServiceCard } from '../components/ServiceCard';
 import { CONTACT_INFO } from '../data/contactInfo';
 import { BrandLogo } from '../components/BrandLogo';
+import { SEOHead } from '../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../lib/seoData';
 import {
   Search,
   ShieldCheck,
@@ -26,6 +28,7 @@ interface HomePageProps {
 export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const seo = MAIN_ROUTES_SEO['/'];
 
   const filteredServices = searchServices(searchQuery, selectedCategory);
   const featuredServices = SERVICES.filter((s) => s.featured).slice(0, 6);
@@ -41,6 +44,14 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   return (
     <div className="space-y-16 pb-16">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+        faqs={seo.faqs}
+      />
       {/* HERO SECTION */}
       <section className="relative overflow-hidden bg-slate-900 text-white pt-16 pb-20 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
         <div className="max-w-5xl mx-auto text-center relative z-10 space-y-8">

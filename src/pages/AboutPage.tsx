@@ -1,14 +1,25 @@
 import React from 'react';
 import { ShieldCheck, Users, Award, Lock, Clock, Heart, ArrowRight } from 'lucide-react';
 import { CONTACT_INFO } from '../data/contactInfo';
+import { SEOHead } from '../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../lib/seoData';
 
 interface AboutPageProps {
   onNavigate: (path: string) => void;
 }
 
 export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate }) => {
+  const seo = MAIN_ROUTES_SEO['/about'];
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+      />
       {/* Header */}
       <div className="text-center space-y-3">
         <span className="text-xs font-bold uppercase tracking-widest text-indigo-600">

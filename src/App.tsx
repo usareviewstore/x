@@ -54,6 +54,7 @@ const PaymentPendingPage = safeLazy(() => import('./pages/PaymentPendingPage'), 
 const PaymentFailedPage = safeLazy(() => import('./pages/PaymentFailedPage'), 'PaymentFailedPage');
 const TrackOrderPage = safeLazy(() => import('./pages/TrackOrderPage'), 'TrackOrderPage');
 const LegalPage = safeLazy(() => import('./pages/LegalPage'), 'LegalPage');
+const SitemapPage = safeLazy(() => import('./pages/SitemapPage'), 'SitemapPage');
 
 const PageLoadingFallback = () => (
   <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center animate-fade-in">
@@ -213,6 +214,14 @@ export default function App() {
 
     if (path === '/disclaimer') {
       return <LegalPage type="disclaimer" onNavigate={navigate} />;
+    }
+
+    if (path === '/editorial-policy') {
+      return <LegalPage type="editorial-policy" onNavigate={navigate} />;
+    }
+
+    if (path === '/sitemap') {
+      return <SitemapPage onNavigate={navigate} />;
     }
 
     // 404 Fallback

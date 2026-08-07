@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { SERVICES, SERVICE_CATEGORIES, searchServices } from '../data/services';
 import { ServiceCard } from '../components/ServiceCard';
+import { SEOHead } from '../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../lib/seoData';
 import { Search, Filter, SlidersHorizontal, Layers } from 'lucide-react';
 
 interface ServicesPageProps {
@@ -12,6 +14,7 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, initialQ
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'name'>('featured');
+  const seo = MAIN_ROUTES_SEO['/services'];
 
   useEffect(() => {
     // Parse query parameter from window location if present
@@ -46,6 +49,13 @@ export const ServicesPage: React.FC<ServicesPageProps> = ({ onNavigate, initialQ
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+      />
       {/* Page Title Header */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-600">

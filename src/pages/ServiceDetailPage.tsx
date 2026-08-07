@@ -4,6 +4,7 @@ import { SERVICES } from '../data/services';
 import { QuantitySelector } from '../components/QuantitySelector';
 import { CONTACT_INFO } from '../data/contactInfo';
 import { BrandLogo } from '../components/BrandLogo';
+import { SEOHead } from '../components/SEOHead';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -456,6 +457,28 @@ export const ServiceDetailPage: React.FC<ServiceDetailPageProps> = ({ slug, onNa
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-20 space-y-16">
+      <SEOHead
+        title={service.seo?.title || `${service.name} | Buy Verified 5-Star Reviews`}
+        description={service.seo?.description || service.longDescription || service.description}
+        keywords={service.seo?.keywords || `buy ${service.name.toLowerCase()}, non drop ${service.name.toLowerCase()}, verified ${service.platform} reviews`}
+        canonicalUrl={`https://usareviewstore.com/services/${service.slug}`}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Services', url: '/services' },
+          { name: service.name, url: `/services/${service.slug}` }
+        ]}
+        faqs={service.faqs}
+        productMeta={{
+          name: service.name,
+          description: service.description,
+          image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=1200&q=80',
+          price: service.price,
+          currency: 'USD',
+          ratingValue: 4.9,
+          reviewCount: 1250,
+          category: service.category
+        }}
+      />
       
       {/* SECTION 1 — BREADCRUMB */}
       <div className="bg-white border-b border-slate-200/80 py-3.5 px-4 sm:px-6 lg:px-8">

@@ -1,13 +1,17 @@
 import React from 'react';
 import { ShieldCheck, FileText, Lock, AlertCircle, RefreshCw } from 'lucide-react';
 import { CONTACT_INFO } from '../data/contactInfo';
+import { SEOHead } from '../components/SEOHead';
+import { MAIN_ROUTES_SEO } from '../lib/seoData';
 
 interface LegalPageProps {
-  type: 'terms' | 'privacy' | 'refund-policy' | 'disclaimer';
+  type: 'terms' | 'privacy' | 'refund-policy' | 'disclaimer' | 'editorial-policy';
   onNavigate: (path: string) => void;
 }
 
 export const LegalPage: React.FC<LegalPageProps> = ({ type, onNavigate }) => {
+  const routeKey = `/${type}`;
+  const seo = MAIN_ROUTES_SEO[routeKey] || MAIN_ROUTES_SEO['/terms'];
   const getLegalContent = () => {
     switch (type) {
       case 'terms':
@@ -154,6 +158,13 @@ export const LegalPage: React.FC<LegalPageProps> = ({ type, onNavigate }) => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+      <SEOHead
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonicalUrl={seo.canonicalUrl}
+        breadcrumbs={seo.breadcrumbs}
+      />
       <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-6">
         <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
