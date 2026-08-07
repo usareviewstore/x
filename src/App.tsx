@@ -1,93 +1,34 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ToastProvider } from './context/ToastContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 
-// Core Eagerly Loaded Pages
+// Core Application Pages (Eagerly Loaded for Instant Deep Link Access)
 import { HomePage } from './pages/HomePage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ServiceDetailPage } from './pages/ServiceDetailPage';
+import { BlogListPage } from './pages/BlogListPage';
+import { BlogPostPage } from './pages/BlogPostPage';
+import { AboutPage } from './pages/AboutPage';
+import { FAQPage } from './pages/FAQPage';
+import { ContactPage } from './pages/ContactPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { PaymentPage } from './pages/PaymentPage';
+import { PaymentSuccessPage } from './pages/PaymentSuccessPage';
+import { PaymentPendingPage } from './pages/PaymentPendingPage';
+import { PaymentFailedPage } from './pages/PaymentFailedPage';
+import { TrackOrderPage } from './pages/TrackOrderPage';
+import { LegalPage } from './pages/LegalPage';
+import { SitemapPage } from './pages/SitemapPage';
 
-// Helper for resilient lazy loading with retry on dynamic import failure
-function safeLazy<T extends React.ComponentType<any>>(
-  factory: () => Promise<any>,
-  exportName: string
-) {
-  return lazy(async () => {
-    try {
-      const m = await factory();
-      const Component = m[exportName] || m.default;
-      if (Component) return { default: Component };
-      throw new Error(`Export ${exportName} not found`);
-    } catch (err) {
-      console.warn(`Dynamic import for ${exportName} failed, retrying...`, err);
-      try {
-        await new Promise(res => setTimeout(res, 300));
-        const m = await factory();
-        const Component = m[exportName] || m.default;
-        if (Component) return { default: Component };
-      } catch (retryErr) {
-        console.error(`Dynamic import retry failed for ${exportName}:`, retryErr);
-      }
-      // Fallback component if module chunk fails to load
-      const FallbackComponent: React.FC<any> = (props) => (
-        <div className="max-w-xl mx-auto px-4 py-20 text-center space-y-4">
-          <h2 className="text-2xl font-black text-slate-900">Unable to Load Section</h2>
-          <p className="text-xs text-slate-600">Please refresh the page or return to our homepage.</p>
-          <div className="flex justify-center gap-3 pt-2">
-            <button
-              onClick={() => window.location.reload()}
-              className="px-5 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl cursor-pointer"
-            >
-              Refresh
-            </button>
-            <button
-              onClick={() => props.onNavigate ? props.onNavigate('/') : (window.location.href = '/')}
-              className="px-5 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl cursor-pointer"
-            >
-              Home
-            </button>
-          </div>
-        </div>
-      );
-      return { default: FallbackComponent };
-    }
-  });
-}
-
-// Lazy Loaded Tool Pages for code splitting & bundle optimization
-const ToolsLandingPage = safeLazy(() => import('./pages/tools/ToolsLandingPage'), 'ToolsLandingPage');
-const ReviewCalculatorPage = safeLazy(() => import('./pages/tools/ReviewCalculatorPage'), 'ReviewCalculatorPage');
-const AIReviewGeneratorPage = safeLazy(() => import('./pages/tools/AIReviewGeneratorPage'), 'AIReviewGeneratorPage');
-const AIResponseGeneratorPage = safeLazy(() => import('./pages/tools/AIResponseGeneratorPage'), 'AIResponseGeneratorPage');
-const ReviewLinkGeneratorPage = safeLazy(() => import('./pages/tools/ReviewLinkGeneratorPage'), 'ReviewLinkGeneratorPage');
-const ReviewBadgeGeneratorPage = safeLazy(() => import('./pages/tools/ReviewBadgeGeneratorPage'), 'ReviewBadgeGeneratorPage');
-const ReviewQrCodePage = safeLazy(() => import('./pages/tools/ReviewQrCodePage'), 'ReviewQrCodePage');
-
-// Lazy Loaded Secondary Application Pages
-const ServicesPage = safeLazy(() => import('./pages/ServicesPage'), 'ServicesPage');
-const ServiceDetailPage = safeLazy(() => import('./pages/ServiceDetailPage'), 'ServiceDetailPage');
-const BlogListPage = safeLazy(() => import('./pages/BlogListPage'), 'BlogListPage');
-const BlogPostPage = safeLazy(() => import('./pages/BlogPostPage'), 'BlogPostPage');
-const AboutPage = safeLazy(() => import('./pages/AboutPage'), 'AboutPage');
-const FAQPage = safeLazy(() => import('./pages/FAQPage'), 'FAQPage');
-const ContactPage = safeLazy(() => import('./pages/ContactPage'), 'ContactPage');
-const CheckoutPage = safeLazy(() => import('./pages/CheckoutPage'), 'CheckoutPage');
-const PaymentPage = safeLazy(() => import('./pages/PaymentPage'), 'PaymentPage');
-const PaymentSuccessPage = safeLazy(() => import('./pages/PaymentSuccessPage'), 'PaymentSuccessPage');
-const PaymentPendingPage = safeLazy(() => import('./pages/PaymentPendingPage'), 'PaymentPendingPage');
-const PaymentFailedPage = safeLazy(() => import('./pages/PaymentFailedPage'), 'PaymentFailedPage');
-const TrackOrderPage = safeLazy(() => import('./pages/TrackOrderPage'), 'TrackOrderPage');
-const LegalPage = safeLazy(() => import('./pages/LegalPage'), 'LegalPage');
-const SitemapPage = safeLazy(() => import('./pages/SitemapPage'), 'SitemapPage');
-
-const PageLoadingFallback = () => (
-  <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center animate-fade-in">
-    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-200/50 mb-4">
-      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-    </div>
-    <div className="text-sm font-bold text-slate-800">Loading Page...</div>
-    <p className="text-xs text-slate-500 mt-1">USA Review Store</p>
-  </div>
-);
+// Tool Pages
+import { ToolsLandingPage } from './pages/tools/ToolsLandingPage';
+import { ReviewCalculatorPage } from './pages/tools/ReviewCalculatorPage';
+import { AIReviewGeneratorPage } from './pages/tools/AIReviewGeneratorPage';
+import { AIResponseGeneratorPage } from './pages/tools/AIResponseGeneratorPage';
+import { ReviewLinkGeneratorPage } from './pages/tools/ReviewLinkGeneratorPage';
+import { ReviewBadgeGeneratorPage } from './pages/tools/ReviewBadgeGeneratorPage';
+import { ReviewQrCodePage } from './pages/tools/ReviewQrCodePage';
 
 const getRepoBase = () => {
   if (typeof window !== 'undefined') {
@@ -275,9 +216,7 @@ export default function App() {
       <div className="min-h-screen flex flex-col bg-slate-50/50 font-sans text-slate-900 selection:bg-indigo-500 selection:text-white">
         <Header currentPath={currentPath} onNavigate={navigate} />
         <main className="flex-1">
-          <Suspense fallback={<PageLoadingFallback />}>
-            {renderRoute()}
-          </Suspense>
+          {renderRoute()}
         </main>
         <Footer onNavigate={navigate} />
       </div>
