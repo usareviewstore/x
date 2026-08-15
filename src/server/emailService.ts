@@ -5,16 +5,21 @@ const SMTP_PASS = (process.env.SMTP_PASS || 'cozi ibbt kzwp xato').replace(/\s+/
 const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'smmbuy2022@gmail.com';
 const APP_URL = process.env.APP_URL || 'https://usareviewstore.com';
 
-// Lazy-initialized nodemailer transporter
+// Direct SSL Transporter on port 465 for Gmail
 let transporter: nodemailer.Transporter | null = null;
 
 function getTransporter(): nodemailer.Transporter {
   if (!transporter) {
     transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // SSL
       auth: {
         user: SMTP_USER,
         pass: SMTP_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
       },
     });
   }
@@ -47,16 +52,19 @@ export async function sendOrderEmails(order: OrderEmailData): Promise<{ adminSen
   let customerSent = false;
   let errorDetail = '';
 
-  const telegramUrl = `https://t.me/EgSupport24?text=Hello%20USA%20Review%20Store%2C%20I%20just%20placed%20order%20${encodeURIComponent(order.orderNumber)}`;
-  const whatsappUrl = `https://wa.me/13073939979?text=Hello%20USA%20Review%20Store%2C%20I%20just%20placed%20order%20${encodeURIComponent(order.orderNumber)}`;
+  const telegramUrl = `https://t.me/EgSupport24?text=${encodeURIComponent(
+    `Hello USA Review Store Support, I just placed an order!\n\nOrder ID: ${order.orderNumber}\nService: ${order.serviceName}\nTotal: $${order.total.toFixed(2)} USD\nCustomer: ${order.customerName} (${order.email})\nTarget: ${order.platformUrl}`
+  )}`;
+  const whatsappUrl = `https://wa.me/13073939979?text=${encodeURIComponent(
+    `Hello USA Review Store Support, I just placed an order!\n\nOrder ID: ${order.orderNumber}\nService: ${order.serviceName}\nTotal: $${order.total.toFixed(2)} USD\nCustomer: ${order.customerName} (${order.email})\nTarget: ${order.platformUrl}`
+  )}`;
   const trackOrderUrl = `${APP_URL}/track-order?order=${encodeURIComponent(order.orderNumber)}&email=${encodeURIComponent(order.email)}`;
   const paymentUrl = `${APP_URL}/payment?order=${encodeURIComponent(order.orderNumber)}`;
 
+  // 1. ADMIN NOTIFICATION EMAIL
   try {
     const mailer = getTransporter();
-
-    // 1. ADMIN NOTIFICATION EMAIL
-    const adminSubject = `🔥 [NEW ORDER] ${order.orderNumber} - ${order.serviceName} ($${order.total.toFixed(2)})`;
+    const adminSubject = `🔥 [NEW ORDER] ${order.orderNumber} - ${order.serviceName} ($${order.total.toFixed(2)} USD)`;
     const adminHtml = `
 <!DOCTYPE html>
 <html>
@@ -120,16 +128,17 @@ export async function sendOrderEmails(order: OrderEmailData): Promise<{ adminSen
 </body>
 </html>`;
 
-    await mailer.sendMail({
+    const adminInfo = await mailer.sendMail({
       from: `"USA Review Store Orders" <${SMTP_USER}>`,
       to: ADMIN_EMAIL,
       subject: adminSubject,
       html: adminHtml,
       replyTo: order.email,
     });
+    console.log(`[SMTP] Admin order email delivered successfully: ${adminInfo.messageId}`);
     adminSent = true;
   } catch (err: any) {
-    console.error('Error sending admin order notification email:', err);
+    console.error('[SMTP] Error sending admin order notification email:', err);
     errorDetail += `Admin email error: ${err.message || err}. `;
   }
 
@@ -225,15 +234,16 @@ export async function sendOrderEmails(order: OrderEmailData): Promise<{ adminSen
 </body>
 </html>`;
 
-    await mailer.sendMail({
+    const customerInfo = await mailer.sendMail({
       from: `"USA Review Store" <${SMTP_USER}>`,
       to: order.email,
       subject: customerSubject,
       html: customerHtml,
     });
+    console.log(`[SMTP] Customer confirmation email delivered successfully: ${customerInfo.messageId}`);
     customerSent = true;
   } catch (err: any) {
-    console.error('Error sending customer order confirmation email:', err);
+    console.error('[SMTP] Error sending customer order confirmation email:', err);
     errorDetail += `Customer email error: ${err.message || err}. `;
   }
 
@@ -248,43 +258,64 @@ export async function sendPaymentVerificationEmail(payment: {
   cryptoSymbol: string;
   network?: string;
   walletAddress?: string;
-  transactionHash: string;
   amountUsd: number;
-}): Promise<boolean> {
+  transactionHash: string;
+  submittedAt: string;
+}): Promise<{ sent: boolean; error?: string }> {
   try {
     const mailer = getTransporter();
-    const subject = `💰 [PAYMENT SUBMITTED] ${payment.orderNumber} - ${payment.cryptoSymbol} ($${payment.amountUsd})`;
+    const subject = `💰 [PAYMENT SUBMITTED] Order #${payment.orderNumber} - $${payment.amountUsd.toFixed(2)} (${payment.cryptoSymbol})`;
     const html = `
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="font-family: sans-serif; padding: 20px; background: #f8fafc; color: #0f172a;">
-  <div style="max-width: 600px; margin: 0 auto; background: #fff; border-radius: 8px; padding: 24px; border: 1px solid #e2e8f0;">
-    <h2 style="color: #16a34a; margin-top: 0;">Payment Submitted for Verification</h2>
-    <p>A customer has submitted cryptocurrency payment details for their order:</p>
-    <ul style="line-height: 1.8;">
-      <li><strong>Order Number:</strong> ${payment.orderNumber}</li>
-      <li><strong>Amount:</strong> $${payment.amountUsd} USD</li>
-      <li><strong>Cryptocurrency:</strong> ${payment.cryptoSymbol} (${payment.network || 'Standard'})</li>
-      <li><strong>Destination Wallet:</strong> <code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${payment.walletAddress || 'N/A'}</code></li>
-      <li><strong>Transaction Hash (TXID):</strong> <br><code style="background: #eff6ff; padding: 4px 8px; border-radius: 4px; color: #2563eb; word-break: break-all;">${payment.transactionHash}</code></li>
-    </ul>
-    <p style="margin-top: 20px;">
-      <a href="${APP_URL}/track-order?order=${payment.orderNumber}" style="background: #2563eb; color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 6px; font-weight: bold;">Verify in Track Order</a>
-    </p>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+    .container { max-width: 620px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+    .header { background: #16a34a; color: #ffffff; padding: 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 20px; color: #ffffff; }
+    .content { padding: 24px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+    .table th, .table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+    .table th { background: #f8fafc; color: #64748b; font-weight: 600; width: 38%; }
+    .tx-box { background: #f1f5f9; font-family: monospace; font-size: 12px; padding: 12px; border-radius: 6px; word-break: break-all; margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Payment Verification Submitted</h1>
+      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.9;">Order Reference: ${payment.orderNumber}</p>
+    </div>
+    <div class="content">
+      <p>A customer has submitted cryptocurrency payment verification for order <strong>${payment.orderNumber}</strong>.</p>
+      
+      <table class="table">
+        <tr><th>Order Reference</th><td><strong>${payment.orderNumber}</strong></td></tr>
+        <tr><th>Amount</th><td><strong style="color:#16a34a;">$${payment.amountUsd.toFixed(2)} USD</strong></td></tr>
+        <tr><th>Cryptocurrency</th><td>${payment.cryptoSymbol} ${payment.network ? `(${payment.network})` : ''}</td></tr>
+        <tr><th>Deposit Wallet</th><td><small>${payment.walletAddress || 'N/A'}</small></td></tr>
+        <tr><th>Submitted At</th><td>${new Date(payment.submittedAt).toUTCString()}</td></tr>
+      </table>
+
+      <p style="margin-top: 16px; font-size: 13px; font-weight: bold;">Transaction Hash / TXID:</p>
+      <div class="tx-box">${payment.transactionHash}</div>
+    </div>
   </div>
 </body>
 </html>`;
 
-    await mailer.sendMail({
+    const info = await mailer.sendMail({
       from: `"USA Review Store Payments" <${SMTP_USER}>`,
       to: ADMIN_EMAIL,
       subject,
       html,
     });
-    return true;
-  } catch (e) {
-    console.error('Error sending payment email alert:', e);
-    return false;
+    console.log(`[SMTP] Payment notification email delivered successfully: ${info.messageId}`);
+    return { sent: true };
+  } catch (err: any) {
+    console.error('[SMTP] Error sending payment verification email:', err);
+    return { sent: false, error: err.message || String(err) };
   }
 }

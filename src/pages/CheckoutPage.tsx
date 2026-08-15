@@ -4,6 +4,7 @@ import { QuantitySelector } from '../components/QuantitySelector';
 import { useToast } from '../context/ToastContext';
 import { SEOHead } from '../components/SEOHead';
 import { saveOrderLocally, generateClientOrderNumber } from '../lib/orderStorage';
+import { dispatchClientOrderNotification } from '../lib/clientNotification';
 import { CONTACT_INFO } from '../data/contactInfo';
 import { Order } from '../types';
 import {
@@ -194,6 +195,23 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
         updatedAt: new Date().toISOString(),
       };
       saveOrderLocally(finalOrderRecord);
+
+      // Trigger client notification fallback for static hosting / GitHub Pages
+      dispatchClientOrderNotification({
+        orderNumber: generatedOrderNumber,
+        customerName: payload.customerName,
+        email: payload.email,
+        phone: payload.phone,
+        businessName: payload.businessName,
+        businessWebsite: payload.businessWebsite,
+        platformUrl: payload.platformUrl,
+        serviceName: currentService.name,
+        packageName: payload.packageName,
+        quantity,
+        unitPrice,
+        total,
+        specialInstructions: payload.specialInstructions,
+      }).catch((err) => console.warn('Client notification dispatch error:', err));
     }
 
     setIsSubmitting(false);

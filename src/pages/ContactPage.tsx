@@ -3,6 +3,7 @@ import { CONTACT_INFO } from '../data/contactInfo';
 import { useToast } from '../context/ToastContext';
 import { SEOHead } from '../components/SEOHead';
 import { MAIN_ROUTES_SEO } from '../lib/seoData';
+import { dispatchClientContactNotification } from '../lib/clientNotification';
 import { MessageSquare, PhoneCall, Send, ShieldCheck, Clock, ExternalLink } from 'lucide-react';
 
 interface ContactPageProps {
@@ -29,6 +30,7 @@ export const ContactPage: React.FC<ContactPageProps> = () => {
     }
 
     setSubmitting(true);
+    let sentViaServer = false;
     try {
       const response = await fetch('/api/contact', {
         method: 'POST',
@@ -36,22 +38,33 @@ export const ContactPage: React.FC<ContactPageProps> = () => {
         body: JSON.stringify({ name, email, orderNumber, message }),
       });
 
-      const data = await response.json();
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Failed to submit contact message.');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          sentViaServer = true;
+        }
       }
-
-      setSubmitted(true);
-      showToast('Message Sent!', 'Our 24/7 team will reply shortly.', 'success');
-      setName('');
-      setEmail('');
-      setOrderNumber('');
-      setMessage('');
-    } catch (err: any) {
-      showToast('Submission Failed', err.message || 'Error sending message.', 'error');
-    } finally {
-      setSubmitting(false);
+    } catch {
+      // Backend unavailable on static hosting
     }
+
+    if (!sentViaServer) {
+      // Dispatch client-side fallback notification
+      await dispatchClientContactNotification({
+        name: name.trim(),
+        email: email.trim(),
+        orderNumber: orderNumber.trim() || undefined,
+        message: message.trim(),
+      });
+    }
+
+    setSubmitted(true);
+    showToast('Message Sent!', 'Our 24/7 team will reply shortly.', 'success');
+    setName('');
+    setEmail('');
+    setOrderNumber('');
+    setMessage('');
+    setSubmitting(false);
   };
 
   return (

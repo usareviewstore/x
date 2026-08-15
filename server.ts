@@ -56,7 +56,7 @@ app.get('/api/services/:slug', (req, res) => {
 });
 
 // 4. POST Create Order
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', async (req, res) => {
   try {
     const {
       customerName,
@@ -122,12 +122,16 @@ app.post('/api/orders', (req, res) => {
 
     ordersStore.set(orderNumber, orderRecord);
 
-    // Asynchronously dispatch Admin Notification & Customer Confirmation Emails
-    sendOrderEmails(orderRecord).catch((mailErr) => {
-      console.error('Background order email dispatch error:', mailErr);
-    });
+    // Dispatch Admin Notification & Customer Confirmation Emails via Gmail SMTP
+    let emailStatus = { adminSent: false, customerSent: false };
+    try {
+      emailStatus = await sendOrderEmails(orderRecord);
+      console.log(`[Order #${orderNumber}] Email dispatch status:`, emailStatus);
+    } catch (mailErr) {
+      console.error('[Order #${orderNumber}] Email dispatch exception:', mailErr);
+    }
 
-    res.status(201).json({ success: true, order: orderRecord });
+    res.status(201).json({ success: true, order: orderRecord, emailStatus });
   } catch (err: any) {
     console.error('Order creation error:', err);
     res.status(500).json({ error: 'Internal server error processing order.' });
@@ -153,7 +157,7 @@ app.get('/api/orders/:orderNumber', (req, res) => {
 });
 
 // 6. POST Submit Crypto Payment
-app.post('/api/payments', (req, res) => {
+app.post('/api/payments', async (req, res) => {
   try {
     const { orderNumber, cryptoSymbol, network, walletAddress, transactionHash, amountUsd } = req.body;
 
@@ -190,10 +194,13 @@ app.post('/api/payments', (req, res) => {
 
     ordersStore.set(order.orderNumber, order);
 
-    // Asynchronously dispatch payment verification alert email
-    sendPaymentVerificationEmail(paymentRecord).catch((mailErr) => {
-      console.error('Background payment email dispatch error:', mailErr);
-    });
+    // Dispatch payment verification alert email
+    try {
+      await sendPaymentVerificationEmail(paymentRecord);
+      console.log(`[Payment #${order.orderNumber}] Alert email sent to admin.`);
+    } catch (mailErr) {
+      console.error(`[Payment #${order.orderNumber}] Alert email error:`, mailErr);
+    }
 
     res.json({ success: true, order, payment: paymentRecord });
   } catch (err: any) {

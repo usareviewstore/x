@@ -6,6 +6,7 @@ import { QRCodeCanvas } from '../components/QRCodeCanvas';
 import { CopyButton } from '../components/CopyButton';
 import { useToast } from '../context/ToastContext';
 import { getLocalOrder, updateLocalOrderStatus } from '../lib/orderStorage';
+import { dispatchClientPaymentNotification } from '../lib/clientNotification';
 import { SEOHead } from '../components/SEOHead';
 import { CONTACT_INFO } from '../data/contactInfo';
 import {
@@ -105,6 +106,7 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ onNavigate }) => {
 
     updateLocalOrderStatus(order.orderNumber, 'Payment Verification', paymentRecord);
 
+    // 1. Dispatch to backend API
     try {
       await fetch('/api/payments', {
         method: 'POST',
@@ -121,6 +123,16 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ onNavigate }) => {
     } catch (serverErr) {
       console.warn('Backend payment submission error, saved locally:', serverErr);
     }
+
+    // 2. Dispatch client fallback notification for static hosting
+    dispatchClientPaymentNotification({
+      orderNumber: order.orderNumber,
+      cryptoSymbol: selectedCrypto.symbol,
+      network: selectedCrypto.network,
+      walletAddress: selectedCrypto.address,
+      transactionHash: transactionHash.trim(),
+      amountUsd: order.total,
+    }).catch((err) => console.warn('Client payment notification dispatch error:', err));
 
     showToast('Payment Verification Submitted!', 'Verification in progress.', 'success');
     setIsSubmitting(false);
