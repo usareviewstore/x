@@ -39,9 +39,12 @@ export const ContactPage: React.FC<ContactPageProps> = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          sentViaServer = true;
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          if (data.success) {
+            sentViaServer = true;
+          }
         }
       }
     } catch {

@@ -319,3 +319,141 @@ export async function sendPaymentVerificationEmail(payment: {
     return { sent: false, error: err.message || String(err) };
   }
 }
+
+/**
+ * Sends Contact Form Inquiry Email to Admin and Confirmation to Customer
+ */
+export async function sendContactEmail(contact: {
+  name: string;
+  email: string;
+  orderNumber?: string | null;
+  message: string;
+  submittedAt: string;
+}): Promise<{ adminSent: boolean; customerSent: boolean; error?: string }> {
+  let adminSent = false;
+  let customerSent = false;
+  let errorDetail = '';
+
+  const mailer = getTransporter();
+
+  // 1. Admin notification
+  try {
+    const adminSubject = `📩 [NEW INQUIRY] From ${contact.name}${contact.orderNumber ? ` (Order #${contact.orderNumber})` : ''}`;
+    const adminHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+    .container { max-width: 620px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+    .header { background: #2563eb; color: #ffffff; padding: 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 20px; color: #ffffff; }
+    .content { padding: 24px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+    .table th, .table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+    .table th { background: #f8fafc; color: #64748b; font-weight: 600; width: 35%; }
+    .msg-box { background: #f1f5f9; padding: 16px; border-radius: 8px; border-left: 4px solid #2563eb; margin: 16px 0; font-size: 14px; line-height: 1.6; }
+    .btn { display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>New Customer Inquiry</h1>
+      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.9;">USA Review Store Help Desk</p>
+    </div>
+    <div class="content">
+      <p>A user submitted a new message through the website contact form:</p>
+      <table class="table">
+        <tr><th>Customer Name</th><td><strong>${contact.name}</strong></td></tr>
+        <tr><th>Customer Email</th><td><a href="mailto:${contact.email}">${contact.email}</a></td></tr>
+        <tr><th>Order Reference</th><td>${contact.orderNumber || 'None / Pre-Sales Inquiry'}</td></tr>
+        <tr><th>Date & Time</th><td>${new Date(contact.submittedAt).toUTCString()}</td></tr>
+      </table>
+
+      <p style="margin-top: 18px; font-weight: bold;">Message Content:</p>
+      <div class="msg-box">${contact.message.replace(/\n/g, '<br>')}</div>
+
+      <p style="margin-top: 24px; text-align: center;">
+        <a href="mailto:${contact.email}?subject=Re:%20USA%20Review%20Store%20Inquiry%20${contact.orderNumber ? encodeURIComponent(`(${contact.orderNumber})`) : ''}" class="btn">Reply to Customer Directly</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const adminInfo = await mailer.sendMail({
+      from: `"USA Review Store Contact Desk" <${SMTP_USER}>`,
+      to: ADMIN_EMAIL,
+      replyTo: contact.email,
+      subject: adminSubject,
+      html: adminHtml,
+    });
+    console.log(`[SMTP] Contact admin email sent: ${adminInfo.messageId}`);
+    adminSent = true;
+  } catch (err: any) {
+    console.error('[SMTP] Contact admin email error:', err);
+    errorDetail += `Admin contact email error: ${err.message || err}. `;
+  }
+
+  // 2. Customer auto-acknowledgement
+  try {
+    const customerSubject = `We have received your message - USA Review Store Support`;
+    const customerHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; margin: 0; padding: 24px; }
+    .container { max-width: 620px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+    .header { background: #0f172a; color: #ffffff; padding: 24px; text-align: center; }
+    .header h1 { margin: 0; font-size: 20px; color: #ffffff; }
+    .content { padding: 24px; line-height: 1.6; }
+    .btn-group { margin: 20px 0; text-align: center; }
+    .btn { display: inline-block; padding: 10px 18px; margin: 6px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; color: #fff; }
+    .btn-tg { background: #229ED9; }
+    .btn-wa { background: #25D366; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>USA Review Store</h1>
+      <p style="margin: 4px 0 0; font-size: 14px; opacity: 0.85;">24/7 Dedicated Customer Care</p>
+    </div>
+    <div class="content">
+      <p>Hello <strong>${contact.name}</strong>,</p>
+      <p>Thank you for reaching out to USA Review Store. We have received your inquiry${contact.orderNumber ? ` regarding Order #${contact.orderNumber}` : ''} and assigned a dedicated support representative to assist you.</p>
+      
+      <p>Our average response time is under <strong>15–30 minutes</strong>. For immediate, real-time live chat assistance, feel free to contact our senior team directly on Telegram or WhatsApp:</p>
+
+      <div class="btn-group">
+        <a href="https://t.me/EgSupport24" class="btn btn-tg">Chat on Telegram (@EgSupport24)</a>
+        <a href="https://wa.me/13073939979" class="btn btn-wa">WhatsApp (+1 307 393 9979)</a>
+      </div>
+
+      <p style="font-size: 13px; color: #64748b; margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+        USA Review Store • 24/7 Premium Reputation & Feedback Growth Services • <a href="${APP_URL}">usareviewstore.com</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+    const customerInfo = await mailer.sendMail({
+      from: `"USA Review Store Support" <${SMTP_USER}>`,
+      to: contact.email,
+      subject: customerSubject,
+      html: customerHtml,
+    });
+    console.log(`[SMTP] Contact customer acknowledgement sent: ${customerInfo.messageId}`);
+    customerSent = true;
+  } catch (err: any) {
+    console.error('[SMTP] Contact customer email error:', err);
+    errorDetail += `Customer contact email error: ${err.message || err}. `;
+  }
+
+  return { adminSent, customerSent, error: errorDetail || undefined };
+}

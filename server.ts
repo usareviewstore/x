@@ -5,7 +5,7 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import { SERVICES } from './src/data/services.js';
 import { CRYPTO_PAYMENT_METHODS } from './src/data/cryptoPayments.js';
-import { sendOrderEmails, sendPaymentVerificationEmail } from './src/server/emailService.js';
+import { sendOrderEmails, sendPaymentVerificationEmail, sendContactEmail } from './src/server/emailService.js';
 
 const app = express();
 const PORT = 3000;
@@ -210,7 +210,7 @@ app.post('/api/payments', async (req, res) => {
 });
 
 // 7. POST Contact Form Submission
-app.post('/api/contact', (req, res) => {
+app.post('/api/contact', async (req, res) => {
   try {
     const { name, email, orderNumber, message } = req.body;
     if (!name || !email || !message) {
@@ -228,9 +228,19 @@ app.post('/api/contact', (req, res) => {
 
     contactSubmissions.push(submission);
 
+    // Dispatch contact email alerts via Gmail SMTP
+    let emailStatus = { adminSent: false, customerSent: false };
+    try {
+      emailStatus = await sendContactEmail(submission);
+      console.log(`[Contact from ${submission.email}] Email status:`, emailStatus);
+    } catch (mailErr) {
+      console.error(`[Contact from ${submission.email}] Email dispatch error:`, mailErr);
+    }
+
     res.json({
       success: true,
       message: 'Thank you for reaching out to USA Review Store support! Our 24/7 team will get back to you shortly.',
+      emailStatus,
     });
   } catch (err) {
     res.status(500).json({ error: 'Failed to save contact message.' });

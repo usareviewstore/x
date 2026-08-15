@@ -21,50 +21,26 @@ export interface ClientOrderNotificationData {
 }
 
 export async function dispatchClientOrderNotification(order: ClientOrderNotificationData): Promise<boolean> {
-  const payload = {
-    access_key: '64861be3-df64-42f8-b39f-27f9999602f3', // public form submission channel
-    subject: `🔥 [USA REVIEW STORE ORDER] ${order.orderNumber} - ${order.serviceName} ($${order.total.toFixed(2)} USD)`,
-    from_name: 'USA Review Store Orders',
-    replyto: order.email,
-    recipient: 'smmbuy2022@gmail.com',
-    'Order Reference': order.orderNumber,
-    'Customer Name': order.customerName,
-    'Customer Email': order.email,
-    'Phone / Telegram': order.phone || 'N/A',
-    'Business Name': order.businessName,
-    'Business Website': order.businessWebsite || 'N/A',
-    'Service': order.serviceName,
-    'Package Tier': order.packageName || 'Standard',
-    'Quantity': `${order.quantity} units ($${order.unitPrice}/unit)`,
-    'Total Amount': `$${order.total.toFixed(2)} USD`,
-    'Target Profile URL': order.platformUrl,
-    'Special Instructions': order.specialInstructions || 'None',
-    'Date & Time': new Date().toUTCString(),
-  };
+  const formData = new FormData();
+  formData.append('_subject', `🔥 [NEW ORDER] ${order.orderNumber} - ${order.serviceName} ($${order.total.toFixed(2)} USD)`);
+  formData.append('_replyto', order.email);
+  formData.append('Order Number', order.orderNumber);
+  formData.append('Customer Name', order.customerName);
+  formData.append('Email', order.email);
+  formData.append('Phone/Telegram', order.phone || 'N/A');
+  formData.append('Business Name', order.businessName);
+  formData.append('Website', order.businessWebsite || 'N/A');
+  formData.append('Service', order.serviceName);
+  formData.append('Tier', order.packageName || 'Standard');
+  formData.append('Quantity', String(order.quantity));
+  formData.append('Total Amount', `$${order.total.toFixed(2)} USD`);
+  formData.append('Target URL', order.platformUrl);
+  formData.append('Instructions', order.specialInstructions || 'None');
+  formData.append('Date', new Date().toUTCString());
 
+  // Method 1: FormSubmit JSON
   try {
-    // Attempt 1: Web3Forms free public email gateway
-    const res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (res.ok) {
-      console.log('[ClientNotification] Order notification successfully dispatched via Web3Forms.');
-      return true;
-    }
-  } catch (err) {
-    console.warn('[ClientNotification] Web3Forms dispatch error:', err);
-  }
-
-  try {
-    // Attempt 2: FormSubmit gateway backup
-    const formSubmitUrl = 'https://formsubmit.co/ajax/smmbuy2022@gmail.com';
-    const res2 = await fetch(formSubmitUrl, {
+    const res = await fetch('https://formsubmit.co/ajax/smmbuy2022@gmail.com', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,25 +49,40 @@ export async function dispatchClientOrderNotification(order: ClientOrderNotifica
       body: JSON.stringify({
         _subject: `🔥 [NEW ORDER] ${order.orderNumber} - ${order.serviceName} ($${order.total.toFixed(2)})`,
         _replyto: order.email,
+        _template: 'table',
         order_number: order.orderNumber,
         customer_name: order.customerName,
         customer_email: order.email,
-        phone: order.phone,
+        phone: order.phone || 'N/A',
         business_name: order.businessName,
+        business_website: order.businessWebsite || 'N/A',
         service: order.serviceName,
+        package: order.packageName || 'Standard',
         quantity: order.quantity,
         total: `$${order.total.toFixed(2)} USD`,
         target_url: order.platformUrl,
-        instructions: order.specialInstructions,
+        instructions: order.specialInstructions || 'None',
       }),
     });
-
-    if (res2.ok) {
-      console.log('[ClientNotification] Order notification successfully dispatched via FormSubmit.');
+    if (res.ok) {
+      console.log('[ClientNotification] Order notification sent via FormSubmit AJAX');
       return true;
     }
+  } catch (err) {
+    console.warn('[ClientNotification] FormSubmit AJAX error:', err);
+  }
+
+  // Method 2: FormSubmit FormData
+  try {
+    const res2 = await fetch('https://formsubmit.co/smmbuy2022@gmail.com', {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors',
+    });
+    console.log('[ClientNotification] Order dispatched via FormSubmit no-cors');
+    return true;
   } catch (err2) {
-    console.warn('[ClientNotification] FormSubmit backup error:', err2);
+    console.warn('[ClientNotification] FormSubmit no-cors error:', err2);
   }
 
   return false;
@@ -160,44 +151,45 @@ export interface ClientContactNotificationData {
 }
 
 export async function dispatchClientContactNotification(contact: ClientContactNotificationData): Promise<boolean> {
-  const payload = {
-    access_key: '64861be3-df64-42f8-b39f-27f9999602f3',
-    subject: `📩 [CONTACT MESSAGE] From ${contact.name}${contact.orderNumber ? ` (Order #${contact.orderNumber})` : ''}`,
-    from_name: 'USA Review Store Contact Desk',
-    replyto: contact.email,
-    recipient: 'smmbuy2022@gmail.com',
-    'Customer Name': contact.name,
-    'Customer Email': contact.email,
-    'Order Reference': contact.orderNumber || 'N/A',
-    'Message': contact.message,
-    'Submitted At': new Date().toUTCString(),
-  };
+  const formData = new FormData();
+  formData.append('_subject', `📩 [CONTACT MESSAGE] From ${contact.name}${contact.orderNumber ? ` (Order #${contact.orderNumber})` : ''}`);
+  formData.append('_replyto', contact.email);
+  formData.append('Name', contact.name);
+  formData.append('Email', contact.email);
+  formData.append('Order Number', contact.orderNumber || 'N/A');
+  formData.append('Message', contact.message);
+  formData.append('Submitted At', new Date().toUTCString());
 
   try {
-    const res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (res.ok) return true;
-  } catch (err) {
-    console.warn('[ClientContactNotification] Web3Forms error:', err);
-  }
-
-  try {
-    const res2 = await fetch('https://formsubmit.co/ajax/smmbuy2022@gmail.com', {
+    const res = await fetch('https://formsubmit.co/ajax/smmbuy2022@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
-        _subject: `📩 [CONTACT MESSAGE] From ${contact.name}`,
+        _subject: `📩 [CONTACT MESSAGE] From ${contact.name}${contact.orderNumber ? ` (Order #${contact.orderNumber})` : ''}`,
         _replyto: contact.email,
+        _template: 'table',
         name: contact.name,
         email: contact.email,
-        order_number: contact.orderNumber,
+        order_number: contact.orderNumber || 'N/A',
         message: contact.message,
       }),
     });
-    if (res2.ok) return true;
+    if (res.ok) {
+      console.log('[ClientContactNotification] FormSubmit AJAX success');
+      return true;
+    }
+  } catch (err) {
+    console.warn('[ClientContactNotification] FormSubmit AJAX error:', err);
+  }
+
+  try {
+    await fetch('https://formsubmit.co/smmbuy2022@gmail.com', {
+      method: 'POST',
+      body: formData,
+      mode: 'no-cors',
+    });
+    console.log('[ClientContactNotification] FormSubmit no-cors sent');
+    return true;
   } catch (err2) {
     console.warn('[ClientContactNotification] FormSubmit error:', err2);
   }

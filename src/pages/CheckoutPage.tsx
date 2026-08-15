@@ -158,11 +158,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.order) {
-          generatedOrderNumber = data.order.orderNumber;
-          finalOrderRecord = data.order;
-          saveOrderLocally(data.order);
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const data = await response.json();
+          if (data.success && data.order) {
+            generatedOrderNumber = data.order.orderNumber;
+            finalOrderRecord = data.order;
+            saveOrderLocally(data.order);
+          }
         }
       }
     } catch (serverErr) {
