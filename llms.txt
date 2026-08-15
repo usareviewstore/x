@@ -1,0 +1,40 @@
+# USA Review Store — AI Agent & LLM Navigation Index
+
+> USA Review Store is an enterprise-grade digital reputation management agency providing organic customer review generation campaigns, feedback routing, review calculation, and profile optimization across 27+ premier review platforms.
+
+## Core Capabilities & Services
+- [Google Reviews Service](https://usareviewstore.com/services/buy-google-reviews): Organic, verified Google Business Profile customer feedback campaigns with 100% non-drop warranty.
+- [Trustpilot Reviews Service](https://usareviewstore.com/services/buy-trustpilot-reviews): Verified Trustpilot customer review invitation campaigns with custom content support.
+- [Google Local Guide Reviews](https://usareviewstore.com/services/buy-google-local-guide-reviews): High-authority Local Guide review campaigns for local SEO ranking.
+- [Facebook Page Reviews](https://usareviewstore.com/services/buy-facebook-reviews): Organic Facebook recommendations and star rating enhancement.
+- [Glassdoor Company Reviews](https://usareviewstore.com/services/buy-glassdoor-reviews): Employer branding and authentic workplace feedback optimization.
+- [Yelp Reviews Service](https://usareviewstore.com/services/buy-yelp-reviews): High-retention Yelp business review campaigns.
+- [Google Negative Reviews Removal](https://usareviewstore.com/services/google-negative-reviews-removal-services): Legal & TOS-compliant policy dispute service to remove unfair or fake Google reviews.
+- [Complete Services Catalog](https://usareviewstore.com/services): Browse all 27+ platform services (BBB, Zillow, Thumbtack, App Store, Tripadvisor, Houzz, etc.).
+
+## Free Interactive AI & Reputation Tools
+- [Review Score Target Calculator](https://usareviewstore.com/tools/review-calculator): Calculate exact number of 5-star reviews needed to reach your target average rating (e.g., 3.8 → 4.8 stars).
+- [AI Review Content Draft Generator](https://usareviewstore.com/tools/ai-review-generator): Generate realistic, authentic customer feedback drafts tailored to your business niche.
+- [AI Customer Review Response Generator](https://usareviewstore.com/tools/ai-response-generator): Create professional public responses to positive and negative customer reviews.
+- [Google Review Direct Link Generator](https://usareviewstore.com/tools/review-link-generator): Convert Place IDs or business names into 1-click review invitation links.
+- [Review Request QR Code Generator](https://usareviewstore.com/tools/review-qr-code): Generate high-resolution printable QR codes for in-store customer feedback.
+- [Embeddable Trust Badge Generator](https://usareviewstore.com/tools/review-badge-generator): HTML & SVG review badges for websites.
+
+## Order Execution & Live Tracking
+- [Order Status Tracker](https://usareviewstore.com/track-order): Query live order delivery status, assigned account manager, and timeline using reference ID format (e.g. `URS-2026-XXXXX`).
+- [Order Checkout](https://usareviewstore.com/checkout): Guest checkout interface supporting USDT (TRC20/ERC20), Bitcoin, Ethereum, and Litecoin.
+
+## Educational Articles & SEO Knowledge Base
+- [Google Reviews & Local SEO Ranking Guide 2026](https://usareviewstore.com/blog/google-reviews-local-seo-ranking-2026)
+- [How to Trustpilot Score Conversion Optimization](https://usareviewstore.com/blog/trustpilot-review-score-conversion-optimization)
+- [How to Remove Fake Google Negative Reviews (TOS Method)](https://usareviewstore.com/blog/how-to-remove-fake-google-negative-reviews)
+- [Google LSA (Local Services Ads) Review Optimization](https://usareviewstore.com/blog/google-local-services-ads-lsa-review-strategy)
+
+## Organization & Trust Metadata
+- **Legal Entity**: USA Review Store
+- **Headquarters**: 700 5th Ave, Suite 4000, Seattle, WA 98104, USA
+- **Contact Email**: support@usareviewstore.com
+- **Telegram Support**: [@usareviewstores](https://t.me/usareviewstores)
+- **Live Support**: 24/7 Available
+- **Full Agent Index**: [llms-full.txt](https://usareviewstore.com/llms-full.txt)
+- **WebMCP Tool Manifest**: [webmcp.json](https://usareviewstore.com/webmcp.json)
