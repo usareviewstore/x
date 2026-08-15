@@ -126,9 +126,9 @@ app.post('/api/orders', async (req, res) => {
     let emailStatus = { adminSent: false, customerSent: false };
     try {
       emailStatus = await sendOrderEmails(orderRecord);
-      console.log(`[Order #${orderNumber}] Email dispatch status:`, emailStatus);
+      console.log(`[Order #${orderNumber}] Email dispatch completed: admin=${emailStatus.adminSent}, customer=${emailStatus.customerSent}`);
     } catch (mailErr) {
-      console.error('[Order #${orderNumber}] Email dispatch exception:', mailErr);
+      console.error(`[Order #${orderNumber}] Email dispatch exception:`, mailErr);
     }
 
     res.status(201).json({ success: true, order: orderRecord, emailStatus });
