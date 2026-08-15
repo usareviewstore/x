@@ -1,0 +1,80 @@
+# USA Review Store — Comprehensive LLM & AI Agent Knowledge Base
+
+## Overview
+USA Review Store (usareviewstore.com) is a digital reputation agency specializing in organic online review acquisition, business profile optimization, negative review dispute resolution, and feedback routing.
+
+---
+
+## Complete Services & Pricing Matrix
+
+| Service Name | Slug | Starting Price | Key Platform | Key Features |
+| --- | --- | --- | --- | --- |
+| Organic Google Business Reviews | buy-google-reviews | $4.50 / review | Google | 100% Non-Drop, Geo-Targeted Accounts, Drip Feed Delivery, Custom Content |
+| Verified Trustpilot Reviews | buy-trustpilot-reviews | $5.00 / review | Trustpilot | Verified Order Status, custom text, high conversion impact |
+| Google Local Guide Reviews (Level 4-8) | buy-google-local-guide-reviews | $6.50 / review | Google | High-authority Local Guide badges, maximum local map pack boost |
+| Google GPS / Real Location Reviews | buy-google-gps-reviews | $7.00 / review | Google | Real location-checkin history, IP verified |
+| Glassdoor Employee Reviews | buy-glassdoor-reviews | $8.00 / review | Glassdoor | Workplace culture & interview rating enhancement |
+| Facebook Page Recommendations | buy-facebook-reviews | $4.00 / review | Facebook | Organic recommendation badges & 5-star ratings |
+| Zillow Agent & Agency Reviews | buy-zillow-reviews | $6.00 / review | Zillow | Real estate agent profile credibility |
+| Thumbtack Contractor Reviews | buy-thumbtack-reviews | $5.50 / review | Thumbtack | Home services contractor profile trust |
+| Google LSA (Local Services Ads) | buy-google-lsa-reviews | $7.50 / review | Google LSA | Direct phone leads & Google Guaranteed ranking |
+| Trustpilot Verified Invite Reviews | buy-trustpilot-verified-reviews | $6.00 / review | Trustpilot | Green verified buyer badge |
+| Houzz Interior & Contractor Reviews | buy-houzz-reviews | $6.00 / review | Houzz | Architecture & design project trust |
+| BBB (Better Business Bureau) Reviews | buy-bbb-reviews | $8.00 / review | BBB | A+ rating maintenance & accredited trust |
+| Google PlayStore App Reviews | buy-google-playstore-reviews | $3.50 / review | Google Play | Android app rating boost & keyword feedback |
+| HomeAdvisor Contractor Reviews | buy-homeadvisor-reviews | $5.50 / review | HomeAdvisor | Home improvement leads boost |
+| Booking.com Hotel Reviews | buy-booking-reviews | $7.00 / review | Booking.com | Hospitality rating & booking rate lift |
+| Website E-commerce Product Reviews | buy-website-product-reviews | $3.50 / review | E-Commerce | Shopify/WooCommerce product page social proof |
+| HomeStars Canadian Service Reviews | buy-homestar-reviews | $6.00 / review | HomeStars | Canadian trade contractor reputation |
+| Chrome Web Store Extension Reviews | buy-chrome-extension-reviews | $4.00 / review | Chrome Store | Chrome extension installation conversion boost |
+| WeddingWire Vendor Reviews | buy-weddingwire-reviews | $6.00 / review | WeddingWire | Wedding vendor venue & photography trust |
+| Reviews.io Product Reviews | buy-reviews-io-reviews | $5.00 / review | Reviews.io | E-commerce merchant review score |
+| Hotels.com Traveler Reviews | buy-hotels-reviews | $7.00 / review | Hotels.com | Hotel booking conversion rate optimization |
+| QuickBooks ProAdvisor Reviews | buy-quickbooks-reviews | $8.00 / review | QuickBooks | Accounting & CPA professional trust |
+| Yelp Business Reviews | buy-yelp-reviews | $9.00 / review | Yelp | High retention Yelp consumer feedback |
+| Elite Yelp Account Reviews | buy-elite-yelp-reviews | $15.00 / review | Yelp | Elite badge user recommendations |
+| IMDb Movie & Show Reviews | buy-imdb-reviews | $4.00 / review | IMDb | Film, series & actor rating boost |
+| RealEstateAgents.com Reviews | buy-realestateagents-reviews | $6.00 / review | RealEstateAgents | Realtor profile social proof |
+| Google Negative Review Dispute | google-negative-reviews-removal-services | Custom Quote | Google | Legal & TOS policy violation dispute resolution |
+
+---
+
+## Machine-Actionable Tool Specifications (WebMCP)
+
+### Tool 1: Review Score Calculator
+- **URL**: `https://usareviewstore.com/tools/review-calculator`
+- **Inputs**: Current Total Reviews ($C_n$), Current Average Rating ($C_r$), Target Rating ($T_r$).
+- **Formula**:
+  $$R_{needed} = \frac{C_n \times (T_r - C_r)}{5 - T_r}$$
+- **Example**: 50 reviews at 3.8 stars targeting 4.8 stars requires 250 five-star reviews.
+
+### Tool 2: AI Review Content Generator
+- **URL**: `https://usareviewstore.com/tools/ai-review-generator`
+- **Inputs**: Business Name, Business Category, Key Highlights, Sentiment (Positive/Constructive).
+- **Output**: Structured JSON array of organic customer review text drafts.
+
+### Tool 3: AI Customer Response Generator
+- **URL**: `https://usareviewstore.com/tools/ai-response-generator`
+- **Inputs**: Review Rating (1-5 stars), Review Text, Manager Name, Business Name.
+- **Output**: Professional, polite public response text adhering to reputation best practices.
+
+### Tool 4: Google Review Direct Link Generator
+- **URL**: `https://usareviewstore.com/tools/review-link-generator`
+- **Inputs**: Place ID or Business Address.
+- **Output**: Direct 1-click URL: `https://search.google.com/local/writereview?placeid={PLACE_ID}`
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q: How does guest checkout work?
+A: No account or registration is required. Select your service, input your target profile URL, pay via cryptocurrency, and track live status with your unique Order Reference ID (e.g., `URS-2026-92841`).
+
+### Q: What payment methods are accepted?
+A: Crypto payments via USDT (TRC20 & ERC20), Bitcoin (BTC), Ethereum (ETH), and Litecoin (LTC).
+
+### Q: What is the delivery speed?
+A: Standard campaigns are drip-fed across 3 to 14 days to simulate natural consumer activity. Custom schedules are available upon request.
+
+### Q: What is the Non-Drop Warranty?
+A: All services include a 60-day non-drop replacement guarantee. If any review drops within 60 days, our team automatically replaces it free of charge.

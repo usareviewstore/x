@@ -1,0 +1,205 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* ==========================================================================
+   Blog Typography & Content Formatting (Prose Overrides)
+   ========================================================================== */
+
+.blog-prose {
+  color: #334155; /* slate-700 */
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.85;
+}
+
+/* Main Section Headings (H2) */
+.blog-prose h2 {
+  color: #0f172a; /* slate-900 */
+  font-size: 1.5rem; /* 24px */
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  padding-left: 1rem;
+  border-left: 4px solid #2563eb; /* blue-600 */
+  line-height: 1.35;
+  scroll-margin-top: 6rem;
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .blog-prose h2 {
+    font-size: 1.75rem; /* 28px */
+  }
+}
+
+/* Subsection Headings (H3) */
+.blog-prose h3 {
+  color: #1e293b; /* slate-800 */
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+  margin-bottom: 0.875rem;
+  line-height: 1.4;
+  scroll-margin-top: 6rem;
+}
+
+@media (min-width: 640px) {
+  .blog-prose h3 {
+    font-size: 1.35rem; /* 21px */
+  }
+}
+
+/* Paragraphs */
+.blog-prose p {
+  margin-bottom: 1.5rem;
+}
+
+.blog-prose p strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.blog-prose p em {
+  color: #475569;
+  font-style: italic;
+  background-color: #f8fafc;
+  padding: 0.1rem 0.3rem;
+  border-radius: 0.25rem;
+}
+
+/* Unordered Lists */
+.blog-prose ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 1rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.blog-prose ul li {
+  position: relative;
+  padding-left: 2rem;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.blog-prose ul li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  background-color: #dbeafe; /* blue-100 */
+  color: #2563eb; /* blue-600 */
+  font-size: 0.8rem;
+  font-weight: 900;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #bfdbfe;
+}
+
+/* Ordered Lists */
+.blog-prose ol {
+  list-style-type: none;
+  counter-reset: blog-counter;
+  padding-left: 0;
+  margin-top: 1rem;
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.blog-prose ol li {
+  counter-increment: blog-counter;
+  position: relative;
+  padding-left: 2.25rem;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.blog-prose ol li::before {
+  content: counter(blog-counter);
+  position: absolute;
+  left: 0;
+  top: 0.15rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background-color: #0f172a; /* slate-900 */
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Callouts & Blockquotes */
+.blog-prose blockquote {
+  border-left: 4px solid #2563eb; /* blue-600 */
+  background-color: #f8fafc;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 0.75rem 0.75rem 0;
+  margin: 1.75rem 0;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+/* Links */
+.blog-prose a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: all 0.15s ease;
+}
+
+.blog-prose a:hover {
+  color: #c2410c;
+  text-decoration-color: #c2410c;
+}
+
+
