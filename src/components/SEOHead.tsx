@@ -13,14 +13,17 @@ export interface FAQItem {
 export interface SEOHeadProps {
   title: string;
   description: string;
-  keywords?: string;
+  keywords?: string | string[];
   canonicalUrl?: string;
+  noIndex?: boolean;
   ogType?: 'website' | 'article' | 'product';
   ogImage?: string;
   breadcrumbs?: BreadcrumbItem[];
   faqs?: FAQItem[];
   schemaData?: Record<string, any> | Record<string, any>[];
   articleMeta?: {
+    title?: string;
+    description?: string;
     publishedTime?: string;
     modifiedTime?: string;
     authorName?: string;
@@ -43,6 +46,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   description,
   keywords,
   canonicalUrl,
+  noIndex = false,
   ogType = 'website',
   ogImage = 'https://usareviewstore.com/assets/og-cover.jpg',
   breadcrumbs,
@@ -51,7 +55,28 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
   articleMeta,
   productMeta,
 }) => {
-  const currentFullUrl = canonicalUrl || (typeof window !== 'undefined' ? window.location.href.split('?')[0] : 'https://usareviewstore.com/');
+  // Normalize Canonical URL
+  let resolvedCanonical = canonicalUrl;
+  if (!resolvedCanonical && typeof window !== 'undefined') {
+    let path = window.location.pathname;
+    if (path.length > 1 && path.endsWith('/')) {
+      path = path.slice(0, -1);
+    }
+    resolvedCanonical = `https://usareviewstore.com${path || '/'}`;
+  }
+  if (!resolvedCanonical) {
+    resolvedCanonical = 'https://usareviewstore.com/';
+  }
+  // Strip trailing slashes on subpages to avoid duplicate alternate URLs
+  if (resolvedCanonical !== 'https://usareviewstore.com/' && resolvedCanonical.endsWith('/')) {
+    resolvedCanonical = resolvedCanonical.slice(0, -1);
+  }
+  // Strip query parameters from canonical URL
+  if (resolvedCanonical.includes('?')) {
+    resolvedCanonical = resolvedCanonical.split('?')[0];
+  }
+
+  const kwText = Array.isArray(keywords) ? keywords.join(', ') : keywords;
 
   useEffect(() => {
     // 1. Update Title
@@ -80,19 +105,25 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
 
     // 2. Meta Tags
     setMetaTag('meta[name="description"]', 'name', 'description', description);
-    if (keywords) {
-      setMetaTag('meta[name="keywords"]', 'name', 'keywords', keywords);
+    if (kwText) {
+      setMetaTag('meta[name="keywords"]', 'name', 'keywords', kwText);
     }
-    setMetaTag('meta[name="robots"]', 'name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+    
+    // Robots Indexing Directive
+    if (noIndex) {
+      setMetaTag('meta[name="robots"]', 'name', 'robots', 'noindex, nofollow');
+    } else {
+      setMetaTag('meta[name="robots"]', 'name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+    }
     setMetaTag('meta[name="author"]', 'name', 'author', 'USA Review Store');
 
     // 3. Canonical Tag
-    setLinkTag('canonical', currentFullUrl);
+    setLinkTag('canonical', resolvedCanonical);
 
     // 4. Open Graph Tags
     setMetaTag('meta[property="og:title"]', 'property', 'og:title', title);
     setMetaTag('meta[property="og:description"]', 'property', 'og:description', description);
-    setMetaTag('meta[property="og:url"]', 'property', 'og:url', currentFullUrl);
+    setMetaTag('meta[property="og:url"]', 'property', 'og:url', resolvedCanonical);
     setMetaTag('meta[property="og:type"]', 'property', 'og:type', ogType);
     setMetaTag('meta[property="og:image"]', 'property', 'og:image', ogImage);
     setMetaTag('meta[property="og:site_name"]', 'property', 'og:site_name', 'USA Review Store');
@@ -174,7 +205,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     if (breadcrumbs && breadcrumbs.length > 0) {
       jsonLdGraph.push({
         '@type': 'BreadcrumbList',
-        '@id': `${currentFullUrl}#breadcrumb`,
+        '@id': `${resolvedCanonical}#breadcrumb`,
         'itemListElement': breadcrumbs.map((item, index) => ({
           '@type': 'ListItem',
           'position': index + 1,
@@ -188,7 +219,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     if (faqs && faqs.length > 0) {
       jsonLdGraph.push({
         '@type': 'FAQPage',
-        '@id': `${currentFullUrl}#faq`,
+        '@id': `${resolvedCanonical}#faq`,
         'mainEntity': faqs.map((faq) => ({
           '@type': 'Question',
           'name': faq.question,
@@ -204,7 +235,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     if (articleMeta) {
       jsonLdGraph.push({
         '@type': 'Article',
-        '@id': `${currentFullUrl}#article`,
+        '@id': `${resolvedCanonical}#article`,
         'headline': title,
         'description': description,
         'image': [ogImage],
@@ -220,7 +251,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
         },
         'mainEntityOfPage': {
           '@type': 'WebPage',
-          '@id': currentFullUrl
+          '@id': resolvedCanonical
         },
         'speakable': {
           '@type': 'SpeakableSpecification',
@@ -233,7 +264,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
     if (productMeta) {
       jsonLdGraph.push({
         '@type': 'Product',
-        '@id': `${currentFullUrl}#product`,
+        '@id': `${resolvedCanonical}#product`,
         'name': productMeta.name,
         'description': productMeta.description,
         'image': productMeta.image,
@@ -286,7 +317,7 @@ export const SEOHead: React.FC<SEOHeadProps> = ({
       '@graph': jsonLdGraph
     });
 
-  }, [title, description, keywords, currentFullUrl, ogType, ogImage, breadcrumbs, faqs, schemaData, articleMeta, productMeta]);
+  }, [title, description, kwText, resolvedCanonical, noIndex, ogType, ogImage, breadcrumbs, faqs, schemaData, articleMeta, productMeta]);
 
   return null;
 };

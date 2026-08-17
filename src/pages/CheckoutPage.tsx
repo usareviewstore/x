@@ -246,6 +246,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate }) => {
         description="Confidential guest checkout for business review acquisition campaigns, local guide reviews, and digital reputation optimization."
         keywords={['checkout', 'buy reviews', 'usa review store checkout', 'guest checkout']}
         canonicalUrl="https://usareviewstore.com/checkout"
+        noIndex={true}
       />
 
       {/* Top Urgent / Direct Contact Notice Banner */}

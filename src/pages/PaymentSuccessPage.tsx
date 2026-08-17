@@ -13,6 +13,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { CONTACT_INFO } from '../data/contactInfo';
+import { SEOHead } from '../components/SEOHead';
 
 interface PaymentSuccessPageProps {
   onNavigate: (path: string) => void;
@@ -63,6 +64,12 @@ export const PaymentSuccessPage: React.FC<PaymentSuccessPageProps> = ({ onNaviga
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12 sm:py-16 text-center space-y-8">
+      <SEOHead
+        title="Payment Verification Submitted | USA Review Store"
+        description="Your order payment verification has been submitted successfully."
+        canonicalUrl="https://usareviewstore.com/payment/success"
+        noIndex={true}
+      />
       <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-xs">
         <CheckCircle2 className="w-10 h-10" />
       </div>

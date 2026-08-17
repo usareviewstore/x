@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ChevronRight,
   HelpCircle,
@@ -15,6 +15,7 @@ import {
 import { TOOLS_LIST } from '../../data/toolsData';
 import { SERVICES } from '../../data/services';
 import { BrandLogo } from '../BrandLogo';
+import { SEOHead } from '../SEOHead';
 
 export interface ToolLayoutProps {
   title: string;
@@ -28,6 +29,7 @@ export interface ToolLayoutProps {
   children: React.ReactNode;
   seoTitle?: string;
   seoDescription?: string;
+  keywords?: string;
 }
 
 export const ToolLayout: React.FC<ToolLayoutProps> = ({
@@ -42,17 +44,9 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({
   children,
   seoTitle,
   seoDescription,
+  keywords,
 }) => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-
-  // Set document title for SEO
-  useEffect(() => {
-    document.title = seoTitle || `${title} | USA Review Store Free Tools`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-      metaDesc.setAttribute('content', seoDescription || shortDescription);
-    }
-  }, [title, seoTitle, seoDescription, shortDescription]);
 
   // Related tools (exclude current)
   const relatedTools = TOOLS_LIST.filter((t) => t.slug !== slug).slice(0, 3);
@@ -60,8 +54,24 @@ export const ToolLayout: React.FC<ToolLayoutProps> = ({
   // Featured services for bottom CTA
   const featuredServices = SERVICES.filter((s) => s.featured).slice(0, 3);
 
+  const canonicalUrl = `https://usareviewstore.com/tools/${slug}`;
+  const resolvedTitle = seoTitle || `${title} | USA Review Store Free Tools`;
+  const resolvedDescription = seoDescription || shortDescription;
+
   return (
     <div className="min-h-screen bg-slate-50/70 pb-20">
+      <SEOHead
+        title={resolvedTitle}
+        description={resolvedDescription}
+        keywords={keywords || `${title.toLowerCase()}, free review tool, reputation utility, usa review store`}
+        canonicalUrl={canonicalUrl}
+        breadcrumbs={[
+          { name: 'Home', url: '/' },
+          { name: 'Free Tools', url: '/tools' },
+          { name: title, url: `/tools/${slug}` }
+        ]}
+        faqs={faqs}
+      />
       {/* BREADCRUMB HEADER BAR */}
       <div className="bg-white border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">

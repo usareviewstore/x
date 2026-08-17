@@ -90,12 +90,27 @@ export default function App() {
       return <HomePage onNavigate={navigate} />;
     }
 
-    if (path === '/services' || path === '/service') {
+    if (path === '/services') {
       return <ServicesPage onNavigate={navigate} />;
     }
 
-    if (path.startsWith('/services/') || path.startsWith('/service/')) {
-      const slug = path.startsWith('/services/') ? path.replace('/services/', '') : path.replace('/service/', '');
+    if (path === '/service') {
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', `${getRepoBase()}/services`);
+      }
+      return <ServicesPage onNavigate={navigate} />;
+    }
+
+    if (path.startsWith('/services/')) {
+      const slug = path.replace('/services/', '');
+      return <ServiceDetailPage slug={slug} onNavigate={navigate} />;
+    }
+
+    if (path.startsWith('/service/')) {
+      const slug = path.replace('/service/', '');
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', `${getRepoBase()}/services/${slug}`);
+      }
       return <ServiceDetailPage slug={slug} onNavigate={navigate} />;
     }
 

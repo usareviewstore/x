@@ -40,6 +40,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', brand: 'USA Review Store', timestamp: new Date().toISOString() });
 });
 
+// Canonical 301 Redirects for /service -> /services
+app.get('/service', (req, res) => {
+  res.redirect(301, '/services');
+});
+app.get('/service/:slug', (req, res) => {
+  res.redirect(301, `/services/${req.params.slug}`);
+});
+
 // 2. GET Services list
 app.get('/api/services', (req, res) => {
   res.json({ services: SERVICES });

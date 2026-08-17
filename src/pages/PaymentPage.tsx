@@ -185,7 +185,8 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({ onNavigate }) => {
       <SEOHead
         title={`Payment for ${order.orderNumber} | USA Review Store`}
         description="Secure cryptocurrency gateway for USA Review Store campaign orders."
-        canonicalUrl={`https://usareviewstore.com/payment?order=${order.orderNumber}`}
+        canonicalUrl="https://usareviewstore.com/payment"
+        noIndex={true}
       />
 
       {/* Header Banner */}

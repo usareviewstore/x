@@ -1,6 +1,7 @@
 import React from 'react';
 import { Clock, RefreshCw, MessageSquare, Search } from 'lucide-react';
 import { CONTACT_INFO } from '../data/contactInfo';
+import { SEOHead } from '../components/SEOHead';
 
 interface PaymentPendingPageProps {
   onNavigate: (path: string) => void;
@@ -12,6 +13,12 @@ export const PaymentPendingPage: React.FC<PaymentPendingPageProps> = ({ onNaviga
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-6">
+      <SEOHead
+        title="Payment Pending Verification | USA Review Store"
+        description="Your transaction is currently undergoing block confirmation and verification."
+        canonicalUrl="https://usareviewstore.com/payment/pending"
+        noIndex={true}
+      />
       <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
         <Clock className="w-8 h-8 animate-pulse" />
       </div>

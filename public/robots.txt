@@ -1,8 +1,21 @@
-# USA Review Store - Enterprise Robots.txt
+# USA Review Store - Robots.txt
 User-agent: *
 Allow: /
-Disallow: /payment/
+Disallow: /checkout
 Disallow: /checkout/
+Disallow: /payment
+Disallow: /payment/
+Disallow: /api/
+
+# Search Crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
 
 # AI Search Crawlers Explicit Permission (GEO & Generative AI Optimization)
 User-agent: GPTBot
@@ -27,3 +40,4 @@ User-agent: Applebot
 Allow: /
 
 Sitemap: https://usareviewstore.com/sitemap.xml
+

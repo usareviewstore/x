@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle, RefreshCw, MessageSquare } from 'lucide-react';
 import { CONTACT_INFO } from '../data/contactInfo';
+import { SEOHead } from '../components/SEOHead';
 
 interface PaymentFailedPageProps {
   onNavigate: (path: string) => void;
@@ -12,6 +13,12 @@ export const PaymentFailedPage: React.FC<PaymentFailedPageProps> = ({ onNavigate
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-16 text-center space-y-6">
+      <SEOHead
+        title="Payment Verification Issue | USA Review Store"
+        description="We could not locate or verify the transaction hash provided."
+        canonicalUrl="https://usareviewstore.com/payment/failed"
+        noIndex={true}
+      />
       <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
         <AlertCircle className="w-8 h-8" />
       </div>

@@ -43,7 +43,15 @@ async function runPostBuild() {
   console.log('✓ Created CNAME (usareviewstore.com)');
 
   // 3. Ensure _redirects exists for Cloudflare Pages / Netlify
-  fs.writeFileSync(path.join(DIST_DIR, '_redirects'), '/*    /index.html   200\n');
+  const redirectsSource = path.join(PUBLIC_DIR, '_redirects');
+  if (fs.existsSync(redirectsSource)) {
+    fs.copyFileSync(redirectsSource, path.join(DIST_DIR, '_redirects'));
+  } else {
+    fs.writeFileSync(
+      path.join(DIST_DIR, '_redirects'),
+      '# 301 Canonical Redirects\n/service/*   /services/:splat   301\n/service     /services          301\n\n# Cloudflare Pages / Netlify SPA Routing\n/*    /index.html   200\n'
+    );
+  }
   console.log('✓ Created _redirects');
 
   // 4. Ensure 404.html exists
@@ -80,7 +88,7 @@ async function runPostBuild() {
   console.log('✓ Created 404.html');
 
   // 5. Gather all routes to pre-render static HTML entry points
-  const routes: { route: string; title?: string; description?: string; keywords?: string; canonicalUrl?: string }[] = [];
+  const routes: { route: string; title?: string; description?: string; keywords?: string; canonicalUrl?: string; noIndex?: boolean }[] = [];
 
   // Main SEO Routes
   Object.entries(MAIN_ROUTES_SEO).forEach(([routePath, seo]) => {
@@ -95,7 +103,7 @@ async function runPostBuild() {
     }
   });
 
-  // Services Routes
+  // Services Routes (Standard Canonical URL: /services/slug)
   SERVICES.forEach((service) => {
     const title = `${service.name} | USA Review Store (#1 Verified Reviews)`;
     const description = `${service.description} 100% non-drop guaranteed with flexible 7, 15, or 30-day warranty replacement options.`;
@@ -103,13 +111,6 @@ async function runPostBuild() {
 
     routes.push({
       route: `/services/${service.slug}`,
-      title,
-      description,
-      canonicalUrl: canonical,
-    });
-
-    routes.push({
-      route: `/service/${service.slug}`,
       title,
       description,
       canonicalUrl: canonical,
@@ -126,26 +127,31 @@ async function runPostBuild() {
     });
   });
 
-  // Additional static utility routes
-  const additionalRoutes = [
+  // Additional static private & utility routes (marked as noindex for search privacy)
+  const noIndexRoutes = [
     '/checkout',
     '/payment',
     '/payment/success',
     '/payment/pending',
     '/payment/failed',
-    '/track-order',
   ];
 
-  additionalRoutes.forEach((route) => {
+  noIndexRoutes.forEach((route) => {
     if (!routes.some((r) => r.route === route)) {
-      routes.push({ route });
+      routes.push({
+        route,
+        title: 'Customer Order Portal | USA Review Store',
+        description: 'Confidential customer order checkout and payment gateway.',
+        canonicalUrl: `https://usareviewstore.com${route}`,
+        noIndex: true,
+      });
     }
   });
 
   console.log(`📦 Pre-rendering ${routes.length} static route entry points for zero-delay deep linking...`);
 
   let count = 0;
-  routes.forEach(({ route, title, description, keywords, canonicalUrl }) => {
+  routes.forEach(({ route, title, description, keywords, canonicalUrl, noIndex }) => {
     const cleanRoute = route.startsWith('/') ? route : `/${route}`;
     const targetDir = path.join(DIST_DIR, cleanRoute);
     ensureDirSync(targetDir);
@@ -171,6 +177,10 @@ async function runPostBuild() {
     if (canonicalUrl) {
       customizedHtml = customizedHtml.replace(/<link rel="canonical" href=".*?" \/>/gi, `<link rel="canonical" href="${canonicalUrl}" />`);
       customizedHtml = customizedHtml.replace(/<meta property="og:url" content=".*?" \/>/gi, `<meta property="og:url" content="${canonicalUrl}" />`);
+    }
+
+    if (noIndex) {
+      customizedHtml = customizedHtml.replace(/<meta name="robots" content=".*?" \/>/gi, '<meta name="robots" content="noindex, nofollow" />');
     }
 
     fs.writeFileSync(path.join(targetDir, 'index.html'), customizedHtml);
