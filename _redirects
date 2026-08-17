@@ -1,1 +1,6 @@
+# 301 Canonical Redirects
+/service/*   /services/:splat   301
+/service     /services          301
+
+# Cloudflare Pages / Netlify SPA Routing
 /*    /index.html   200
